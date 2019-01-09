@@ -1,6 +1,6 @@
 {
     "name": "solutiondrive/sdlanguageshopsessionsyncshopware",
-    "description": "TODO Change this default description",
+    "description": "Plugin to synchronize session during a language change",
     "type": "shopware-plugin",
     "license": "proprietary",
     "authors": [

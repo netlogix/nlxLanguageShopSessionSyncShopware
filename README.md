@@ -2,7 +2,16 @@
 
 ## About sdLanguageShopSessionSyncShopware
 
-TODO Change this default description
+This shopware plugin synchronizes the session during a language change.
+
+The default behaviour in Shopware is that on a language change a new session is started
+- the user (if logged in) will be logged out
+- the cart will be emptied
+
+The plugin will take care that the user
+- stays logged in
+- all products will stay in the shopping cart
+
 
 ## Running Tests
 
