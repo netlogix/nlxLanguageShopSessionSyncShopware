@@ -1,0 +1,6 @@
+suites:
+  default:
+    namespace: sdLanguageShopSessionSyncShopware
+    psr4_prefix: sdLanguageShopSessionSyncShopware
+    spec_path: ./
+    src_path: ./
