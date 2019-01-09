@@ -1,0 +1,137 @@
+workspace:
+  base: /workspace
+  path: sdlanguageshopsessionsyncshopware
+
+pipeline:
+  setup:composer:
+    image: solutiondrive/php-composer:${PHP_VERSION}
+    commands:
+      - ./etc/scripts/prepareComposerJson.sh
+      - composer update -n --no-progress --no-suggest
+    volumes:
+      - /var/cache/composer:/composer/cache
+    secrets: [ composer_auth ]
+
+  test:codingstandards:
+    image: solutiondrive/php-composer:${PHP_VERSION}
+    commands:
+      - ./etc/scripts/checkCodingStandards.sh
+    when:
+      matrix:
+        PHP_VERSION: php7.2
+        SHOPWARE_VERSION: 5.5.*
+
+  test:spec:
+    image: solutiondrive/php-xdebug:${PHP_VERSION}
+    commands:
+      - vendor/bin/phpspec-standalone.${PHP_VERSION}.phar run --no-code-generation --format=dot
+
+  test:unit:
+    image: solutiondrive/php-xdebug:${PHP_VERSION}
+    commands:
+      - vendor/bin/phpunit -c phpunit_unit.xml.dist
+
+  test:check_structure:
+    image: alpine:latest
+    commands:
+      - ./etc/scripts/checkForCorrectPluginStructure.sh
+
+  publish:create:archive:
+    image: solutiondrive/php-composer:${PHP_VERSION}
+    commands:
+      - rm -rf /workspace/__release/sdLanguageShopSessionSyncShopware*.zip
+      - mkdir -p /workspace/__release/sdLanguageShopSessionSyncShopware
+      - git fetch
+      - git archive ${DRONE_COMMIT_BRANCH} | tar -x -C /workspace/__release/sdLanguageShopSessionSyncShopware
+      - cd /workspace/__release/sdLanguageShopSessionSyncShopware
+      - composer install --no-dev -n -o --no-progress --no-suggest
+      - cd /workspace/__release
+      - zip -r sdLanguageShopSessionSyncShopware.zip sdLanguageShopSessionSyncShopware
+      - rm -rf /workspace/__release/sdLanguageShopSessionSyncShopware
+    when:
+      ref: [ refs/heads/master, refs/tags/* ]
+      event: [push, tag]
+      matrix:
+        PHP_VERSION: php7.0
+        SHOPWARE_VERSION: 5.2.*
+
+  publish:create:master_archive:
+    image: alpine:latest
+    commands:
+      - cp /workspace/__release/sdLanguageShopSessionSyncShopware.zip /workspace/__release/sdLanguageShopSessionSyncShopware-master.zip
+    when:
+      ref: [ refs/heads/master ]
+      event: [push]
+      matrix:
+        PHP_VERSION: php7.0
+        SHOPWARE_VERSION: 5.2.*
+
+  publish:create:release_archive:
+    image: alpine:latest
+    commands:
+      - cp /workspace/__release/sdLanguageShopSessionSyncShopware.zip /workspace/__release/sdLanguageShopSessionSyncShopware-${DRONE_COMMIT_BRANCH}.zip
+    when:
+      ref: [ refs/tags/* ]
+      event: [tag]
+      matrix:
+        PHP_VERSION: php7.0
+        SHOPWARE_VERSION: 5.2.*
+
+  publish:create:latest_archive:
+    image: alpine:latest
+    commands:
+      - cp /workspace/__release/sdLanguageShopSessionSyncShopware.zip /workspace/__release/sdLanguageShopSessionSyncShopware-latest.zip
+    when:
+      ref: [
+        "refs/tags/v[0-9].[0-9].[0-9]",
+        "refs/tags/v[0-9].[0-9].[0-9][0-9]",
+        "refs/tags/v[0-9].[0-9][0-9].[0-9]",
+        "refs/tags/v[0-9][0-9].[0-9].[0-9]",
+        "refs/tags/v[0-9].[0-9][0-9].[0-9][0-9]",
+        "refs/tags/v[0-9][0-9].[0-9].[0-9][0-9]",
+        "refs/tags/v[0-9][0-9].[0-9][0-9].[0-9]",
+        "refs/tags/v[0-9][0-9].[0-9][0-9].[0-9][0-9]"
+        ]
+      event: [tag]
+      matrix:
+        PHP_VERSION: php7.0
+        SHOPWARE_VERSION: 5.2.*
+
+  publish:s3:release:
+    image: plugins/s3
+    bucket: sd-applications-releases
+    region: eu-central-1
+    acl: private
+    source: /workspace/__release/sdLanguageShopSessionSyncShopware-*.zip
+    target: /releases/
+    strip_prefix: /workspace/__release/
+    when:
+      ref: [ refs/heads/master, refs/tags/* ]
+      event: [push, tag]
+      matrix:
+        PHP_VERSION: php7.0
+        SHOPWARE_VERSION: 5.2.*
+
+  notify:mail:
+    image: docker.solutiondrive.de/drone/plugin-email
+    from: ci@solutiondrive.de
+    host: sslout.df.eu
+    when:
+      event: push
+      status: [changed, failure]
+    secrets:
+    - source: ci_email_user
+      target: plugin_username
+    - source: ci_email_password
+      target: plugin_password
+
+matrix:
+  PHP_VERSION:
+    - php7.2
+    - php7.1
+    - php7.0
+  SHOPWARE_VERSION:
+    - 5.5.*
+    - 5.4.*
+    - 5.3.*
+    - 5.2.*
