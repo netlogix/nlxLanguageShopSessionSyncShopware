@@ -87,6 +87,10 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
 
+        $response
+            ->removeCookie('session-1', '/')
+            ->shouldBeCalled();
+
         $this->onRouteShutdown($args);
     }
 

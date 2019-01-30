@@ -41,8 +41,8 @@ class ShopChangeSubscriber implements SubscriberInterface
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
                     $cookiePath = rtrim((string) $currentShop->getPath(), '/') . '/';
+                    $response->removeCookie($cookieKey, $currentShop->getPath());
                     $response->setCookie('session-' . $request->getPost('__shop'), $cookieValue, 0, $cookiePath);
-                    return;
                 }
             }
         }
