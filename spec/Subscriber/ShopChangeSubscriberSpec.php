@@ -88,7 +88,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
 
         $response
-            ->removeCookie('session-1', '/')
+            ->setCookie('session-1', '', 1)
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
