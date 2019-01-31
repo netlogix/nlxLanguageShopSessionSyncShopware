@@ -113,7 +113,7 @@ pipeline:
         SHOPWARE_VERSION: \~5.2.27
 
   notify:mail:
-    image: docker.solutiondrive.de/drone/plugin-email
+    image: drillster/drone-email
     from: ci@solutiondrive.de
     host: sslout.df.eu
     when:
