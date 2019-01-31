@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2019 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace spec\sdLanguageShopSessionSyncShopware\Subscriber;
@@ -19,7 +19,6 @@ use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
 
 class ShopChangeSubscriberSpec extends ObjectBehavior
 {
-
     public function let(
         ContextServiceInterface $contextService,
         ShopContextInterface $shopContext,
@@ -86,6 +85,10 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
 
         $response
             ->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+
+        $response
+            ->setCookie('session-1', '', 1)
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * Created by solutionDrive GmbH
  *
- * @copyright 2018 solutionDrive GmbH
+ * @copyright solutionDrive GmbH
  */
 
 namespace sdLanguageShopSessionSyncShopware\Subscriber;
@@ -41,8 +41,9 @@ class ShopChangeSubscriber implements SubscriberInterface
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
                     $cookiePath = rtrim((string) $currentShop->getPath(), '/') . '/';
+                    // reset the cookie so only one valid cookie will be set IE11 fix
+                    $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $request->getPost('__shop'), $cookieValue, 0, $cookiePath);
-                    return;
                 }
             }
         }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILTERED_FOLDERS=`find ./ -mindepth 1 -maxdepth 1 -type d | grep -Ev 'Resources|tests|etc|spec|logs|.phpspec|.git|vendor|.idea'`
+FILTERED_FOLDERS=`find ./ -mindepth 1 -maxdepth 1 -type d | grep -Ev 'Resources|tests|etc|logs|.phpspec|.git|vendor|.idea'`
 
 if [ "0" != "$(echo $?)" ]; then
     echo "No php files found to lint. So technically spoken everything's fine, but please check that I haven't missed any files."
