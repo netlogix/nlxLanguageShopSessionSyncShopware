@@ -51,44 +51,34 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         \Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args
-            ->getRequest()
+        $args->getRequest()
             ->shouldBeCalled()
             ->willReturn($request);
-
-        $args
-            ->getResponse()
+        $args->getResponse()
             ->shouldBeCalled()
             ->willReturn($response);
 
-        $request
-            ->getPost('__shop')
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $request
-            ->getCookie()
+        $request->getCookie()
             ->willReturn([
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
 
-        $shop
-            ->getId()
+        $shop->getId()
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $shop
-            ->getPath()
+        $shop->getPath()
             ->shouldBeCalled()
             ->willReturn('/');
 
-        $response
-            ->setCookie('session-2', 'swordfish', 0, '/')
+        $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
-
-        $response
-            ->setCookie('session-1', '', 1)
+        $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
@@ -100,34 +90,28 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         \Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args
-            ->getRequest()
+        $args->getRequest()
             ->shouldBeCalled()
             ->willReturn($request);
-
-        $args
-            ->getResponse()
+        $args->getResponse()
             ->shouldBeCalled()
             ->willReturn($response);
 
-        $request
-            ->getPost('__shop')
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $request
-            ->getCookie()
+        $request->getCookie()
             ->willReturn([
                 'session-2' => 'session-two',
             ]);
 
-        $shop
-            ->getId()
+        $shop->getId()
             ->shouldBeCalled()
             ->willReturn(2);
 
-        $response
-            ->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
 
         $this->onRouteShutdown($args);
@@ -138,17 +122,14 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         \Enlight_Controller_Request_Request $request,
         \Enlight_Controller_Response_ResponseHttp $response
     ) {
-        $args
-            ->getRequest()
+        $args->getRequest()
             ->shouldBeCalled()
             ->willReturn($request);
-
-        $args
-            ->getResponse()
+        $args->getResponse()
             ->shouldBeCalled()
             ->willReturn($response);
-        $response
-            ->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
 
         $this->onRouteShutdown($args);

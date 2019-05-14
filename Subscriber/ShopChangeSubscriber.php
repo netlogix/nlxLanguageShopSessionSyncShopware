@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace sdLanguageShopSessionSyncShopware\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_Request_Request;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class ShopChangeSubscriber implements SubscriberInterface
@@ -35,7 +36,7 @@ class ShopChangeSubscriber implements SubscriberInterface
         $request = $args->getRequest();
         $response = $args->getResponse();
 
-        if (null !== $request->getPost('__shop')) {
+        if (true === $this->isShopChangeRequest($request)) {
             $currentShop = $this->contextService->getShopContext()->getShop();
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
@@ -47,5 +48,15 @@ class ShopChangeSubscriber implements SubscriberInterface
                 }
             }
         }
+    }
+
+    private function isShopChangeRequest(
+        Enlight_Controller_Request_Request $request
+    ) {
+        if (true === $request->isPost() && null !== $request->getPost('__shop')) {
+            return true;
+        }
+
+        return false;
     }
 }
