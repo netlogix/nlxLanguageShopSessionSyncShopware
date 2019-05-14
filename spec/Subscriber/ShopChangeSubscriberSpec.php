@@ -186,9 +186,6 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     ) {
         $this->prepareArguments($args, $request, $response);
 
-        $request->getCookie()
-            ->shouldNotBeCalled();
-
         $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
 
