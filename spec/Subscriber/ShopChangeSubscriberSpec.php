@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace spec\sdLanguageShopSessionSyncShopware\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_EventArgs;
+use Enlight_Controller_Request_Request;
+use Enlight_Controller_Response_ResponseHttp;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sdLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
@@ -46,17 +49,12 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     }
 
     public function it_can_set_previous_session_on_language_change(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response,
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
-        $args->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
+        $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
             ->willReturn(true);
@@ -85,17 +83,12 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     }
 
     public function it_wont_set_previous_session_on_language_change_if_new_language_is_same(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response,
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
-        $args->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
+        $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
             ->willReturn(true);
@@ -118,16 +111,11 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     }
 
     public function it_wont_set_session_on_missing_post_argument(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
     ) {
-        $args->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
-        $args->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
+        $this->prepareArguments($args, $request, $response);
 
         $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
@@ -136,17 +124,12 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     }
 
     public function it_can_set_previous_session_on_language_change_through_get_request(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response,
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
-        $args->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
+        $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
             ->shouldBeCalled()
@@ -176,5 +159,18 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
+    }
+
+    private function prepareArguments(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $args->getRequest()
+            ->shouldBeCalled()
+            ->willReturn($request);
+        $args->getResponse()
+            ->shouldBeCalled()
+            ->willReturn($response);
     }
 }
