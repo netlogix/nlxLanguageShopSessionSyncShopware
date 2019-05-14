@@ -195,6 +195,52 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
+    public function it_wont_set_session_on_empty_post_argument(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(true);
+        $request->isGet()
+            ->willReturn(false);
+        $request->getPost('__shop')
+            ->shouldBeCalled()
+            ->willReturn(null);
+        $request->getCookie()
+            ->shouldNotBeCalled();
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_on_empty_get_argument(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(null);
+        $request->getCookie()
+            ->shouldNotBeCalled();
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
     private function prepareArguments(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
