@@ -11,6 +11,7 @@ namespace sdLanguageShopSessionSyncShopware\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Request_Request;
+use Psr\Log\LoggerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 
 class ShopChangeSubscriber implements SubscriberInterface
@@ -18,9 +19,15 @@ class ShopChangeSubscriber implements SubscriberInterface
     /** @var ContextServiceInterface */
     private $contextService;
 
-    public function __construct(ContextServiceInterface $contextService)
-    {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        ContextServiceInterface $contextService,
+        LoggerInterface $logger
+    ) {
         $this->contextService = $contextService;
+        $this->logger = $logger;
     }
 
     /**
@@ -37,11 +44,13 @@ class ShopChangeSubscriber implements SubscriberInterface
         $response = $args->getResponse();
 
         if (true === $this->isShopChangeRequest($request)) {
+            $this->logger->debug('[LANGUAGESHOPSESSIONSYNC] It is a shop change request');
             $currentShop = $this->contextService->getShopContext()->getShop();
             $newShopId = $this->getNewShopId($request);
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (\preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
+                    $this->logger->debug(\sprintf('[LANGUAGESHOPSESSIONSYNC] Found cookie (%s) to check and use it for the new shop (%s)', $cookieKey, $newShopId));
                     $cookiePath = \rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);

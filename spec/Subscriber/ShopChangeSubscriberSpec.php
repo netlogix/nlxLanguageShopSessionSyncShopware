@@ -15,6 +15,7 @@ use Enlight_Controller_Request_Request;
 use Enlight_Controller_Response_ResponseHttp;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use sdLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Shop;
@@ -24,6 +25,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
 {
     public function let(
         ContextServiceInterface $contextService,
+        LoggerInterface $logger,
         ShopContextInterface $shopContext,
         Shop $shop
     ) {
@@ -35,7 +37,10 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->getShop()
             ->willReturn($shop);
 
-        $this->beConstructedWith($contextService);
+        $this->beConstructedWith(
+            $contextService,
+            $logger
+        );
     }
 
     public function it_is_initializable()
