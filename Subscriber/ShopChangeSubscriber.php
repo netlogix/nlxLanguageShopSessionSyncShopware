@@ -41,8 +41,8 @@ class ShopChangeSubscriber implements SubscriberInterface
             $newShopId = $this->getNewShopId($request);
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
-                if (preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
-                    $cookiePath = rtrim((string) $currentShop->getPath(), '/') . '/';
+                if (\preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
+                    $cookiePath = \rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
