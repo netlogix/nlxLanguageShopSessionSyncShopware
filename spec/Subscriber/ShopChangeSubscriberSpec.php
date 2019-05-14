@@ -192,6 +192,24 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
+    public function it_wont_set_session_if_it_is_not_a_get_request_nor_a_post_request(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->willReturn(false);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
     public function it_wont_set_session_on_empty_post_argument(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
