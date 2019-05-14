@@ -110,19 +110,6 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
-    public function it_wont_set_session_on_missing_post_argument(
-        Enlight_Controller_EventArgs $args,
-        Enlight_Controller_Request_Request $request,
-        Enlight_Controller_Response_ResponseHttp $response
-    ) {
-        $this->prepareArguments($args, $request, $response);
-
-        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
-            ->shouldNotBeCalled();
-
-        $this->onRouteShutdown($args);
-    }
-
     public function it_can_set_previous_session_on_language_change_through_get_request(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
@@ -185,6 +172,19 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $shop->getId()
             ->shouldBeCalled()
             ->willReturn(2);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_on_missing_arguments(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
 
         $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
