@@ -134,4 +134,47 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
 
         $this->onRouteShutdown($args);
     }
+
+    public function it_can_set_previous_session_on_language_change_through_get_request(
+        \Enlight_Controller_EventArgs $args,
+        \Enlight_Controller_Request_Request $request,
+        \Enlight_Controller_Response_ResponseHttp $response,
+        Shop $shop
+    ) {
+        $args->getRequest()
+            ->shouldBeCalled()
+            ->willReturn($request);
+        $args->getResponse()
+            ->shouldBeCalled()
+            ->willReturn($response);
+
+        $request->isPost()
+            ->shouldBeCalled()
+            ->willReturn(false);
+        $request->isGet()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-1' => 'swordfish',
+                'session-2' => 'session-two',
+            ]);
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $shop->getPath()
+            ->shouldBeCalled()
+            ->willReturn('/');
+
+        $response->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+        $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
 }

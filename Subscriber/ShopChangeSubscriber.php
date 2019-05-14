@@ -38,13 +38,14 @@ class ShopChangeSubscriber implements SubscriberInterface
 
         if (true === $this->isShopChangeRequest($request)) {
             $currentShop = $this->contextService->getShopContext()->getShop();
+            $newShopId = $this->getNewShopId($request);
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
                     $cookiePath = rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);
-                    $response->setCookie('session-' . $request->getPost('__shop'), $cookieValue, 0, $cookiePath);
+                    $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
                 }
             }
         }
@@ -57,6 +58,24 @@ class ShopChangeSubscriber implements SubscriberInterface
             return true;
         }
 
+        if (true === $request->isGet() && null !== $request->getQuery('__shop')) {
+            return true;
+        }
+
         return false;
+    }
+
+    private function getNewShopId(
+        Enlight_Controller_Request_Request $request
+    ) {
+        if (true === $request->isPost()) {
+            return $request->getPost('__shop');
+        }
+
+        if (true === $request->isGet()) {
+            return $request->getQuery('__shop');
+        }
+
+        return null;
     }
 }
