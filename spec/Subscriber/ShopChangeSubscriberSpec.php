@@ -48,7 +48,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->shouldImplement(SubscriberInterface::class);
     }
 
-    public function it_can_set_previous_session_on_language_change(
+    public function it_can_set_previous_session_on_language_change_post_request(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
         Enlight_Controller_Response_ResponseHttp $response,
@@ -82,7 +82,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
-    public function it_wont_set_previous_session_on_language_change_if_new_language_is_same(
+    public function it_wont_set_previous_session_on_language_change_post_request_if_new_language_is_same(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
         Enlight_Controller_Response_ResponseHttp $response,
