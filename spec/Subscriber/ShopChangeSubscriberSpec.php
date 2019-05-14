@@ -161,6 +161,37 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
+    public function it_wont_set_previous_session_on_language_change_get_request_if_new_language_is_same(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        Shop $shop
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-2' => 'session-two',
+            ]);
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
     private function prepareArguments(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
