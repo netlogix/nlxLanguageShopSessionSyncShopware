@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace spec\sdLanguageShopSessionSyncShopware\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
+use Enlight_Controller_EventArgs;
+use Enlight_Controller_Request_Request;
+use Enlight_Controller_Response_ResponseHttp;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use sdLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
@@ -45,112 +48,224 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->shouldImplement(SubscriberInterface::class);
     }
 
-    public function it_can_set_previous_session_on_language_change(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response,
+    public function it_can_set_previous_session_on_language_change_post_request(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args
-            ->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
+        $this->prepareArguments($args, $request, $response);
 
-        $args
-            ->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
-
-        $request
-            ->getPost('__shop')
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $request
-            ->getCookie()
+        $request->getCookie()
             ->willReturn([
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
 
-        $shop
-            ->getId()
+        $shop->getId()
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $shop
-            ->getPath()
+        $shop->getPath()
             ->shouldBeCalled()
             ->willReturn('/');
 
-        $response
-            ->setCookie('session-2', 'swordfish', 0, '/')
+        $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
-
-        $response
-            ->setCookie('session-1', '', 1)
+        $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
     }
 
-    public function it_wont_set_previous_session_on_language_change_if_new_language_is_same(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response,
+    public function it_wont_set_previous_session_on_language_change_post_request_if_new_language_is_same(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
         Shop $shop
     ) {
-        $args
-            ->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
+        $this->prepareArguments($args, $request, $response);
 
-        $args
-            ->getResponse()
-            ->shouldBeCalled()
-            ->willReturn($response);
-
-        $request
-            ->getPost('__shop')
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
             ->shouldBeCalled()
             ->willReturn(2);
-
-        $request
-            ->getCookie()
+        $request->getCookie()
             ->willReturn([
                 'session-2' => 'session-two',
             ]);
 
-        $shop
-            ->getId()
+        $shop->getId()
             ->shouldBeCalled()
             ->willReturn(2);
 
-        $response
-            ->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
 
         $this->onRouteShutdown($args);
     }
 
-    public function it_wont_set_session_on_missing_post_argument(
-        \Enlight_Controller_EventArgs $args,
-        \Enlight_Controller_Request_Request $request,
-        \Enlight_Controller_Response_ResponseHttp $response
+    public function it_can_set_previous_session_on_language_change_through_get_request(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        Shop $shop
     ) {
-        $args
-            ->getRequest()
-            ->shouldBeCalled()
-            ->willReturn($request);
+        $this->prepareArguments($args, $request, $response);
 
-        $args
-            ->getResponse()
+        $request->isPost()
             ->shouldBeCalled()
-            ->willReturn($response);
-        $response
-            ->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->willReturn(false);
+        $request->isGet()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-1' => 'swordfish',
+                'session-2' => 'session-two',
+            ]);
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $shop->getPath()
+            ->shouldBeCalled()
+            ->willReturn('/');
+
+        $response->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+        $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_previous_session_on_language_change_get_request_if_new_language_is_same(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        Shop $shop
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-2' => 'session-two',
+            ]);
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
             ->shouldNotBeCalled();
 
         $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_on_missing_arguments(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_if_it_is_not_a_get_request_nor_a_post_request(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->willReturn(false);
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_on_empty_post_argument(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(true);
+        $request->isGet()
+            ->willReturn(false);
+        $request->getPost('__shop')
+            ->shouldBeCalled()
+            ->willReturn(null);
+        $request->getCookie()
+            ->shouldNotBeCalled();
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_wont_set_session_on_empty_get_argument(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(false);
+        $request->isGet()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(null);
+        $request->getCookie()
+            ->shouldNotBeCalled();
+
+        $response->setCookie(Argument::any(), Argument::any(), Argument::any(), Argument::any())
+            ->shouldNotBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    private function prepareArguments(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response
+    ) {
+        $args->getRequest()
+            ->shouldBeCalled()
+            ->willReturn($request);
+        $args->getResponse()
+            ->shouldBeCalled()
+            ->willReturn($response);
     }
 }
