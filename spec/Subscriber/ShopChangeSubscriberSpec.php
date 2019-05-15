@@ -83,6 +83,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
+        $response->setRedirect('/')
+            ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
     }
@@ -148,6 +150,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+        $response->setRedirect('/')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);

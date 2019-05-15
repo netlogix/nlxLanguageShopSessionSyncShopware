@@ -55,6 +55,8 @@ class ShopChangeSubscriber implements SubscriberInterface
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
+                    // perform redirect to enforce a complete session (re)load
+                    $response->setRedirect('/');
                 }
             }
         }
