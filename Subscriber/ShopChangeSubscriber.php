@@ -44,6 +44,7 @@ class ShopChangeSubscriber implements SubscriberInterface
         $response = $args->getResponse();
 
         if (true === $this->isShopChangeRequest($request)) {
+            $currentUri = $request->getRequestUri();
             $this->logger->debug('[LANGUAGESHOPSESSIONSYNC] It is a shop change request');
             $currentShop = $this->contextService->getShopContext()->getShop();
             $newShopId = $this->getNewShopId($request);
@@ -56,7 +57,7 @@ class ShopChangeSubscriber implements SubscriberInterface
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
                     // perform redirect to enforce a complete session (re)load
-                    $response->setRedirect('/');
+                    $response->setRedirect($currentUri);
                 }
             }
         }

@@ -61,6 +61,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     ) {
         $this->prepareArguments($args, $request, $response);
 
+        $request->getRequestUri()
+            ->willReturn('FRAMES');
         $request->isPost()
             ->willReturn(true);
         $request->getPost('__shop')
@@ -83,7 +85,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
-        $response->setRedirect('/')
+        $response->setRedirect('FRAMES')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
@@ -125,6 +127,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     ) {
         $this->prepareArguments($args, $request, $response);
 
+        $request->getRequestUri()
+            ->willReturn('FRAMES');
         $request->isPost()
             ->shouldBeCalled()
             ->willReturn(false);
@@ -151,7 +155,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
-        $response->setRedirect('/')
+        $response->setRedirect('FRAMES')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
