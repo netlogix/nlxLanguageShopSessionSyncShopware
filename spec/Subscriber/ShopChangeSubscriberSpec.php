@@ -61,8 +61,6 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     ) {
         $this->prepareArguments($args, $request, $response);
 
-        $request->getRequestUri()
-            ->willReturn('FRAMES');
         $request->isPost()
             ->willReturn(true);
         $request->getPost('__shop')
@@ -73,6 +71,9 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('FRAMES');
 
         $shop->getId()
             ->shouldBeCalled()
@@ -127,8 +128,6 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
     ) {
         $this->prepareArguments($args, $request, $response);
 
-        $request->getRequestUri()
-            ->willReturn('FRAMES');
         $request->isPost()
             ->shouldBeCalled()
             ->willReturn(false);
@@ -143,6 +142,9 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('FRAMES');
 
         $shop->getId()
             ->shouldBeCalled()
