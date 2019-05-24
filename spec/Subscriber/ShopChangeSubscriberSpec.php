@@ -71,6 +71,9 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('/FRAMES/');
 
         $shop->getId()
             ->shouldBeCalled()
@@ -83,7 +86,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
-        $response->setRedirect('/')
+        $response->setRedirect('/FRAMES/')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);
@@ -139,6 +142,9 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
                 'session-1' => 'swordfish',
                 'session-2' => 'session-two',
             ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('/FRAMES/');
 
         $shop->getId()
             ->shouldBeCalled()
@@ -151,7 +157,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
-        $response->setRedirect('/')
+        $response->setRedirect('/FRAMES/')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);

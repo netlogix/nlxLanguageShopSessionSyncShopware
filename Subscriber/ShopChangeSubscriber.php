@@ -50,13 +50,14 @@ class ShopChangeSubscriber implements SubscriberInterface
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (\preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
+                    $currentUri = $request->getRequestUri();
                     $this->logger->debug(\sprintf('[LANGUAGESHOPSESSIONSYNC] Found cookie (%s) to check and use it for the new shop (%s)', $cookieKey, $newShopId));
                     $cookiePath = \rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
                     // perform redirect to enforce a complete session (re)load
-                    $response->setRedirect('/');
+                    $response->setRedirect($currentUri);
                 }
             }
         }
