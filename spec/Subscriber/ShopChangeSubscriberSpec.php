@@ -271,6 +271,45 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
+    public function it_redirect_to_root_path_if_it_has_specific_shop_id_in_uri(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        Shop $shop
+    ) {
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-1' => 'swordfish',
+                'session-2' => 'session-two',
+            ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('/?__shop=3');
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $shop->getPath()
+            ->shouldBeCalled()
+            ->willReturn('/');
+
+        $response->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+        $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+        $response->setRedirect('/')
+            ->shouldBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
     private function prepareArguments(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,

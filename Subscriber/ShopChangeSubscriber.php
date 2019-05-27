@@ -50,7 +50,7 @@ class ShopChangeSubscriber implements SubscriberInterface
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (\preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
-                    $currentUri = $request->getRequestUri();
+                    $currentUri = $this->getUri($request);
                     $this->logger->debug(\sprintf('[LANGUAGESHOPSESSIONSYNC] Found cookie (%s) to check and use it for the new shop (%s)', $cookieKey, $newShopId));
                     $cookiePath = \rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
@@ -61,6 +61,22 @@ class ShopChangeSubscriber implements SubscriberInterface
                 }
             }
         }
+    }
+
+    private function getUri(Enlight_Controller_Request_Request $request): string
+    {
+        $currentUri = $request->getRequestUri();
+
+        if ($this->isHomepage($currentUri)) {
+            $currentUri = '/';
+        }
+
+        return $currentUri;
+    }
+
+    private function isHomepage(string $currentUri)
+    {
+        return \preg_match('/__shop=/', $currentUri);
     }
 
     private function isShopChangeRequest(
