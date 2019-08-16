@@ -16,13 +16,4 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class sdLanguageShopSessionSyncShopware extends Plugin
 {
-
-    /**
-    * @param ContainerBuilder $container
-    */
-    public function build(ContainerBuilder $container)
-    {
-        $container->setParameter('sdlanguageshopsessionsyncshopware.plugin_dir', $this->getPath());
-        parent::build($container);
-    }
 }
