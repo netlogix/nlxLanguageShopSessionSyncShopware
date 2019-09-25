@@ -13,6 +13,7 @@ use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_Request_Request;
 use Psr\Log\LoggerInterface;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
+use Shopware\Components\Routing\RouterInterface;
 
 class ShopChangeSubscriber implements SubscriberInterface
 {
@@ -22,12 +23,17 @@ class ShopChangeSubscriber implements SubscriberInterface
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var RouterInterface $router */
+    private $router;
+
     public function __construct(
         ContextServiceInterface $contextService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        RouterInterface $router
     ) {
         $this->contextService = $contextService;
         $this->logger = $logger;
+        $this->router = $router;
     }
 
     /**
@@ -67,16 +73,39 @@ class ShopChangeSubscriber implements SubscriberInterface
     {
         $currentUri = $request->getRequestUri();
 
-        if ($this->isHomepage($currentUri)) {
-            $currentUri = '/';
+        $urlPath = \parse_url($currentUri, PHP_URL_PATH);
+        $params = $this->router->match($urlPath);
+
+        if (false === $params) {
+            $params = [
+                'module' => 'frontend',
+                'controller' => 'index',
+                'action' => 'index',
+            ];
         }
 
-        return $currentUri;
+        $params = \array_merge($params, $this->getUrlParameter($currentUri));
+
+        if (\count($params) > 3 && isset($params['__shop'])) {
+            unset($params['__shop']);
+        }
+
+        return $this->router->assemble($params);
     }
 
-    private function isHomepage(string $currentUri)
+    /**
+     * @return string[]
+     */
+    private function getUrlParameter(string $currentUri): array
     {
-        return \preg_match('/__shop=/', $currentUri);
+        $urlQuery = \parse_url($currentUri, PHP_URL_QUERY);
+        $queries = [];
+
+        if (null !== $urlQuery) {
+            \parse_str($urlQuery, $queries);
+        }
+
+        return $queries;
     }
 
     private function isShopChangeRequest(
