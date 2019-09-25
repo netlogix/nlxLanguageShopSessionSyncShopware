@@ -20,12 +20,14 @@ use sdLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Shop;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;
+use Shopware\Components\Routing\RouterInterface;
 
 class ShopChangeSubscriberSpec extends ObjectBehavior
 {
     public function let(
         ContextServiceInterface $contextService,
         LoggerInterface $logger,
+        RouterInterface $router,
         ShopContextInterface $shopContext,
         Shop $shop
     ) {
@@ -39,7 +41,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
 
         $this->beConstructedWith(
             $contextService,
-            $logger
+            $logger,
+            $router
         );
     }
 
@@ -57,8 +60,16 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
         Enlight_Controller_Response_ResponseHttp $response,
+        RouterInterface $router,
         Shop $shop
     ) {
+        $params = [
+            'module' => 'frontend',
+            'controller' => 'cat',
+            'action' => 'index',
+            'sCategory' => '5',
+        ];
+
         $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
@@ -81,6 +92,12 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $shop->getPath()
             ->shouldBeCalled()
             ->willReturn('/');
+
+        $router->match('/FRAMES/')
+            ->willReturn($params);
+
+        $router->assemble($params)
+            ->willReturn('/FRAMES/');
 
         $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
@@ -124,8 +141,15 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
         Enlight_Controller_Response_ResponseHttp $response,
+        RouterInterface $router,
         Shop $shop
     ) {
+        $params = [
+            'module' => 'frontend',
+            'controller' => 'cat',
+            'action' => 'index',
+            'sCategory' => '5',
+        ];
         $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
@@ -152,6 +176,12 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $shop->getPath()
             ->shouldBeCalled()
             ->willReturn('/');
+
+        $router->match('/FRAMES/')
+            ->willReturn($params);
+
+        $router->assemble($params)
+            ->willReturn('/FRAMES/');
 
         $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
@@ -271,12 +301,18 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->onRouteShutdown($args);
     }
 
-    public function it_redirect_to_root_path_if_it_has_specific_shop_id_in_uri(
+    public function it_delete_shop_parameter_if_it_is_defined(
         Enlight_Controller_EventArgs $args,
         Enlight_Controller_Request_Request $request,
         Enlight_Controller_Response_ResponseHttp $response,
+        RouterInterface $router,
         Shop $shop
     ) {
+        $params = [
+            'module' => 'frontend',
+            'controller' => 'index',
+            'action' => 'index',
+        ];
         $this->prepareArguments($args, $request, $response);
 
         $request->isPost()
@@ -300,11 +336,74 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             ->shouldBeCalled()
             ->willReturn('/');
 
+        $router->match('/')
+            ->willReturn(false);
+
+        $router->assemble($params)
+            ->willReturn('/');
+
         $response->setCookie('session-2', 'swordfish', 0, '/')
             ->shouldBeCalled();
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
         $response->setRedirect('/')
+            ->shouldBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_delete_shop_parameter_if_it_is_defined_with_url_path(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        RouterInterface $router,
+        Shop $shop
+    ) {
+        $params = [
+            'module' => 'frontend',
+            'controller' => 'acount',
+            'action' => 'index',
+            '__shop' => '3',
+        ];
+        $assembleParams = [
+            'module' => 'frontend',
+            'controller' => 'acount',
+            'action' => 'index',
+        ];
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->willReturn(true);
+        $request->getPost('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-1' => 'swordfish',
+                'session-2' => 'session-two',
+            ]);
+        $request->getRequestUri()
+            ->shouldBeCalled()
+            ->willReturn('/account/__shop/3');
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $shop->getPath()
+            ->shouldBeCalled()
+            ->willReturn('/');
+
+        $router->match('/account/__shop/3')
+            ->willReturn($params);
+
+        $router->assemble($assembleParams)
+            ->willReturn('/account');
+
+        $response->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+        $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+        $response->setRedirect('/account')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);

@@ -9,6 +9,7 @@
         >
             <argument type="service" id="shopware_storefront.context_service"/>
             <argument type="service" id="pluginlogger" />
+            <argument type="service" id="router"/>
             <tag name="shopware.event_subscriber"/>
         </service>
     </services>
