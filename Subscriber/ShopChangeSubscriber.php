@@ -26,14 +26,22 @@ class ShopChangeSubscriber implements SubscriberInterface
     /** @var RouterInterface $router */
     private $router;
 
+    /** @var array|mixed[] $pluginConfig complex configuration array */
+    private $pluginConfig;
+
+    /**
+     * @param array|mixed[] $pluginConf complex configuration array
+     */
     public function __construct(
         ContextServiceInterface $contextService,
         LoggerInterface $logger,
-        RouterInterface $router
+        RouterInterface $router,
+        array $pluginConfig
     ) {
         $this->contextService = $contextService;
         $this->logger = $logger;
         $this->router = $router;
+        $this->pluginConfig = $pluginConfig;
     }
 
     /**
@@ -56,13 +64,18 @@ class ShopChangeSubscriber implements SubscriberInterface
             // get session_id from any previous shop but current
             foreach ($request->getCookie() as $cookieKey => $cookieValue) {
                 if (\preg_match('/^session-((?!' . $currentShop->getId() . ').)/', $cookieKey)) {
-                    $currentUri = $this->getUri($request);
                     $this->logger->debug(\sprintf('[LANGUAGESHOPSESSIONSYNC] Found cookie (%s) to check and use it for the new shop (%s)', $cookieKey, $newShopId));
                     $cookiePath = \rtrim((string) $currentShop->getPath(), '/') . '/';
                     // reset the cookie so only one valid cookie will be set IE11 fix
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
+
+                    if ($this->pluginConfig['redirectToHomepage']) {
+                        $response->setRedirect('/');
+                        return;
+                    }
                     // perform redirect to enforce a complete session (re)load
+                    $currentUri = $this->getUri($request);
                     $response->setRedirect($currentUri);
                 }
             }
