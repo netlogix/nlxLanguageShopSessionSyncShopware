@@ -31,7 +31,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         ShopContextInterface $shopContext,
         Shop $shop
     ) {
-        $pluginConf = ['redirectToHomepage' => false];
+        $pluginConfig = ['redirectToHomepage' => false];
 
         $contextService
             ->getShopContext()
@@ -45,7 +45,7 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
             $contextService,
             $logger,
             $router,
-            $pluginConf
+            $pluginConfig
         );
     }
 
@@ -421,13 +421,13 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         LoggerInterface $logger,
         Shop $shop
     ) {
-        $pluginConf = ['redirectToHomepage' => true];
+        $pluginConfig = ['redirectToHomepage' => true];
 
         $this->beConstructedWith(
             $contextService,
             $logger,
             $router,
-            $pluginConf
+            $pluginConfig
         );
         $this->prepareArguments($args, $request, $response);
 

@@ -26,8 +26,8 @@ class ShopChangeSubscriber implements SubscriberInterface
     /** @var RouterInterface $router */
     private $router;
 
-    /** @var array|mixed[] $pluginConf complex configuration array */
-    private $pluginConf;
+    /** @var array|mixed[] $pluginConfig complex configuration array */
+    private $pluginConfig;
 
     /**
      * @param array|mixed[] $pluginConf complex configuration array
@@ -36,12 +36,12 @@ class ShopChangeSubscriber implements SubscriberInterface
         ContextServiceInterface $contextService,
         LoggerInterface $logger,
         RouterInterface $router,
-        array $pluginConf
+        array $pluginConfig
     ) {
         $this->contextService = $contextService;
         $this->logger = $logger;
         $this->router = $router;
-        $this->pluginConf = $pluginConf;
+        $this->pluginConfig = $pluginConfig;
     }
 
     /**
@@ -70,7 +70,7 @@ class ShopChangeSubscriber implements SubscriberInterface
                     $response->setCookie($cookieKey, '', 1);
                     $response->setCookie('session-' . $newShopId, $cookieValue, 0, $cookiePath);
 
-                    if ($this->pluginConf['redirectToHomepage']) {
+                    if ($this->pluginConfig['redirectToHomepage']) {
                         $response->setRedirect('/');
                         return;
                     }
