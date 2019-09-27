@@ -31,6 +31,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         ShopContextInterface $shopContext,
         Shop $shop
     ) {
+        $pluginConf = ['redirectToHomepage' => false];
+
         $contextService
             ->getShopContext()
             ->willReturn($shopContext);
@@ -42,7 +44,8 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $this->beConstructedWith(
             $contextService,
             $logger,
-            $router
+            $router,
+            $pluginConf
         );
     }
 
@@ -404,6 +407,57 @@ class ShopChangeSubscriberSpec extends ObjectBehavior
         $response->setCookie('session-1', '', 1)
             ->shouldBeCalled();
         $response->setRedirect('/account')
+            ->shouldBeCalled();
+
+        $this->onRouteShutdown($args);
+    }
+
+    public function it_redirect_to_the_homepage_if_the_config_parameter_is_set(
+        Enlight_Controller_EventArgs $args,
+        Enlight_Controller_Request_Request $request,
+        Enlight_Controller_Response_ResponseHttp $response,
+        RouterInterface $router,
+        ContextServiceInterface $contextService,
+        LoggerInterface $logger,
+        Shop $shop
+    ) {
+        $pluginConf = ['redirectToHomepage' => true];
+
+        $this->beConstructedWith(
+            $contextService,
+            $logger,
+            $router,
+            $pluginConf
+        );
+        $this->prepareArguments($args, $request, $response);
+
+        $request->isPost()
+            ->shouldBeCalled()
+            ->willReturn(false);
+        $request->isGet()
+            ->shouldBeCalled()
+            ->willReturn(true);
+        $request->getQuery('__shop')
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $request->getCookie()
+            ->willReturn([
+                'session-1' => 'swordfish',
+                'session-2' => 'session-two',
+            ]);
+
+        $shop->getId()
+            ->shouldBeCalled()
+            ->willReturn(2);
+        $shop->getPath()
+            ->shouldBeCalled()
+            ->willReturn('/');
+
+        $response->setCookie('session-2', 'swordfish', 0, '/')
+            ->shouldBeCalled();
+        $response->setCookie('session-1', '', 1)
+            ->shouldBeCalled();
+        $response->setRedirect('/')
             ->shouldBeCalled();
 
         $this->onRouteShutdown($args);

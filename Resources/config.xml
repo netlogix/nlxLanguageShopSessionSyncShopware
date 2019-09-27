@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.3/engine/Shopware/Components/Plugin/schema/config.xsd"
+>
+    <elements>
+        <element required="true" type="boolean">
+            <name>redirectToHomepage</name>
+            <label lang="de">Auf die Startseite umleiten</label>
+            <label lang="en">Redirect to the homepage</label>
+            <value>false</value>
+            <description lang="de">
+                Wenn gesetzt, wird bei jedem Sprachshop Wechsel auf die Startseite umgeleitet.
+            </description>
+            <description lang="en">
+                If set, each language shop change will be redirect to the homepage.
+            </description>
+        </element>
+    </elements>
+</config>
