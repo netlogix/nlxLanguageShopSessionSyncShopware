@@ -1,20 +1,20 @@
 <?php
 
-namespace sdLanguageShopSessionSyncShopware\Tests;
+namespace nlxLanguageShopSessionSyncShopware\Tests;
 
-use sdLanguageShopSessionSyncShopware\sdLanguageShopSessionSyncShopware as Plugin;
+use nlxLanguageShopSessionSyncShopware\nlxLanguageShopSessionSyncShopware as Plugin;
 use Shopware\Components\Test\Plugin\TestCase;
 
 class PluginTest extends TestCase
 {
     protected static $ensureLoadedPlugins = [
-        'sdLanguageShopSessionSyncShopware' => []
+        'nlxLanguageShopSessionSyncShopware' => []
     ];
 
     public function testCanCreateInstance()
     {
         /** @var Plugin $plugin */
-        $plugin = Shopware()->Container()->get('kernel')->getPlugins()['sdLanguageShopSessionSyncShopware'];
+        $plugin = Shopware()->Container()->get('kernel')->getPlugins()['nlxLanguageShopSessionSyncShopware'];
 
         $this->assertInstanceOf(Plugin::class, $plugin);
     }

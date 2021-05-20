@@ -1,6 +1,6 @@
 suites:
   default:
-    namespace: sdLanguageShopSessionSyncShopware
-    psr4_prefix: sdLanguageShopSessionSyncShopware
+    namespace: nlxLanguageShopSessionSyncShopware
+    psr4_prefix: nlxLanguageShopSessionSyncShopware
     spec_path: ./
     src_path: ./

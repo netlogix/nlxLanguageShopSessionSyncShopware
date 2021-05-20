@@ -1,6 +1,6 @@
 <?php
 
-namespace sdLanguageShopSessionSyncShopware;
+namespace nlxLanguageShopSessionSyncShopware;
 
 use Shopware\Components\Plugin;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -12,8 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 }*/
 
 /**
- * Shopware-Plugin sdLanguageShopSessionSyncShopware.
+ * Shopware-Plugin nlxLanguageShopSessionSyncShopware.
  */
-class sdLanguageShopSessionSyncShopware extends Plugin
+class nlxLanguageShopSessionSyncShopware extends Plugin
 {
 }

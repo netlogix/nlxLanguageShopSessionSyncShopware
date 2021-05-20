@@ -1,6 +1,6 @@
-# sdLanguageShopSessionSyncShopware
+# nlxLanguageShopSessionSyncShopware
 
-## About sdLanguageShopSessionSyncShopware
+## About nlxLanguageShopSessionSyncShopware
 
 This shopware plugin synchronizes the session during a language change.
 

@@ -1,20 +1,20 @@
 {
-    "name": "solutiondrive/sdlanguageshopsessionsyncshopware",
+    "name": "netlogix/nlxlanguageshopsessionsyncshopware",
     "description": "Plugin to synchronize session during a language change",
     "type": "shopware-plugin",
     "license": "proprietary",
     "authors": [
         {
-            "name": "solutionDrive GmbH",
-            "email": "info@solutiondrive.de"
+            "name": "netlogix GmbH & Co. KG",
+            "email": "websolutions@netlogix.de"
         }
     ],
     "extra": {
-        "installer-name": "sdLanguageShopSessionSyncShopware"
+        "installer-name": "nlxLanguageShopSessionSyncShopware"
     },
     "autoload": {
         "psr-4": {
-            "sdLanguageShopSessionSyncShopware\\": "."
+            "nlxLanguageShopSessionSyncShopware\\": "."
         }
     },
     "require": {
