@@ -2,21 +2,21 @@
 declare(strict_types=1);
 
 /*
- * Created by solutionDrive GmbH
+ * Created by netlogix GmbH & Co. KG
  *
- * @copyright solutionDrive GmbH
+ * @copyright netlogix GmbH & Co. KG
  */
 
-namespace spec\sdLanguageShopSessionSyncShopware\Subscriber;
+namespace spec\nlxLanguageShopSessionSyncShopware\Subscriber;
 
 use Enlight\Event\SubscriberInterface;
 use Enlight_Controller_EventArgs;
 use Enlight_Controller_Request_Request;
 use Enlight_Controller_Response_ResponseHttp;
+use nlxLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
-use sdLanguageShopSessionSyncShopware\Subscriber\ShopChangeSubscriber;
 use Shopware\Bundle\StoreFrontBundle\Service\ContextServiceInterface;
 use Shopware\Bundle\StoreFrontBundle\Struct\Shop;
 use Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface;

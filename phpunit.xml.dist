@@ -12,7 +12,7 @@
          verbose="true">
 
     <testsuites>
-        <testsuite name="sdLanguageShopSessionSyncShopware_AllTests">
+        <testsuite name="nlxLanguageShopSessionSyncShopware_AllTests">
             <directory>./tests/Unit</directory>
             <directory>./tests/Functional</directory>
         </testsuite>
